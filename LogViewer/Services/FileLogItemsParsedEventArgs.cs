@@ -6,17 +6,23 @@ using System.Threading.Tasks;
 
 namespace LogViewer.Base.Models
 {
-    public class LogItemsParsedEventArgs : EventArgs
+    public class FileLogItemsParsedEventArgs : EventArgs
     {
+        private string _filePath;
+
         private IList<LogItem> _items;
 
         public IList<LogItem> Items => _items;
 
-        public LogItemsParsedEventArgs(IList<LogItem> items)
+        public string FilePath => _filePath;
+
+        public FileLogItemsParsedEventArgs(string filePath, IList<LogItem> items)
             : base()
         {
+            ArgumentNullException.ThrowIfNull(filePath);
             ArgumentNullException.ThrowIfNull(items);
 
+            _filePath = filePath;
             _items = items;
         }
     }

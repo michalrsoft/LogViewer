@@ -18,7 +18,7 @@ namespace LogViewer.Base.Parsers
             ArgumentNullException.ThrowIfNull(logEntryHeader);
             ArgumentNullException.ThrowIfNull(queueOfLogLines);
 
-            List<LogItem> logEntries = new List<LogItem>();
+            List<LogItem> logItemsParsed = new List<LogItem>();
 
             LogEntry initialLine = queueOfLogLines.Peek();
 
@@ -31,10 +31,11 @@ namespace LogViewer.Base.Parsers
                     if (initialLine.Contents.Length > logEntryHeader.Length)
                     {
                         List<string> logEntryParts = SplitCommaDelimeted(initialLine.Contents.Substring(logEntryHeader.Length));
-                        LogItem initialLogEntry = GenerateLogEntry(initialLine, logEntryParts);
-                        if (initialLogEntry != null)
+                        LogItem initialLogItem = GenerateLogEntry(initialLine, logEntryParts);
+                        if (initialLogItem != null)
                         {
-                            logEntries.Add(initialLogEntry);
+                            logItemsParsed.Add(initialLogItem);
+                            this.OnLogItemsParsed(new List<LogItem>() { initialLogItem });
                         }
                     }
 
@@ -52,23 +53,20 @@ namespace LogViewer.Base.Parsers
                                 break;
                             }
 
-                            LogItem nextLogEntry = GenerateLogEntry(nextLine, SplitCommaDelimeted(nextLine.Contents));
-                            if (nextLogEntry == null)
+                            LogItem nextLogItem = GenerateLogEntry(nextLine, SplitCommaDelimeted(nextLine.Contents));
+                            if (nextLogItem == null)
                             {
                                 break;
                             }
 
-                            logEntries.Add(nextLogEntry);
+                            logItemsParsed.Add(nextLogItem);
+                            this.OnLogItemsParsed(new List<LogItem>() { nextLogItem });
+
                             queueOfLogLines.Dequeue();
                         }
                     }
 
-                    if (logEntries.Any())
-                    {
-                        this.OnLinesParsed(logEntries);
-                    }
-
-                    logEntriesOutput = logEntries;
+                    logEntriesOutput = logItemsParsed;
                     return true;
                 }
             }

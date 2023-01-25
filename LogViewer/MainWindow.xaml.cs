@@ -17,6 +17,7 @@ using Accessibility;
 using LogViewer.Base;
 using LogViewer.Base.Models;
 using LogViewer.Base.Parsers;
+using LogViewer.ViewModels;
 
 namespace LogViewer
 {
@@ -27,47 +28,7 @@ namespace LogViewer
     {
         public MainWindow()
         {
-            InitializeComponent();
-
-            // TODO: 
-            // Change this. It's a temporary solution for an initial quick test to see the data displayed. 
-
-            string[] allLines = System.IO.File.ReadAllLines("85C27NK92C.com.flexibits.fantastical2.mac.helper 2022-11-26--03-25-05-612.log");
-
-            Queue<LogEntry> logEntries = new Queue<LogEntry>(new LogFileSplitter().SplitEntries(allLines));
-
-            List<ILogEntryParser> logEntryParsers =
-                new List<ILogEntryParser>()
-                {
-                    new AccountLogEntryParser(),
-                    new CalendarLogEntryParser(),
-                    new CurrentCalendarSetLogEntryParser(),
-                    new SyncQueuesLogEntryParser(),
-                };
-
-            List<LogItem> allLogItems = new List<LogItem>();
-            while (logEntries.Any())
-            {
-                bool lineParsed = false;
-                foreach (ILogEntryParser parser in logEntryParsers)
-                {
-                    if (parser.TryParse(logEntries, out var newlyParsedEntries))
-                    {
-                        lineParsed = true;
-                        allLogItems.AddRange(newlyParsedEntries);
-
-                        break;
-                    }
-                }
-
-                if (!lineParsed)
-                {
-                    logEntries.Dequeue();
-                }
-            }
-
-            LogItemsViewModel logItemsViewModel = new LogItemsViewModel(allLogItems);
-            DataContext = logItemsViewModel;
+            InitializeComponent(); 
         }
     }
 }

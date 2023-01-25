@@ -70,7 +70,7 @@ namespace LogViewer.Base.Parsers
                         List<LogItem> logItems = syncQueueStrings.Select(s => GenerateLogEntry(logEntry, s)).ToList();
                         if (logItems.Any())
                         {
-                            this.OnLinesParsed(logItems);
+                            this.OnLogItemsParsed(logItems);
 
                             logEntriesOutput = logItems;
                             return true;

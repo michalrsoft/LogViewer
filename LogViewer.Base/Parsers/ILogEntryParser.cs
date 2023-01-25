@@ -4,7 +4,7 @@ namespace LogViewer.Base.Parsers
 {
     public interface ILogEntryParser
     {
-        event EventHandler<LogItemsParsedEventArgs> LinesParsed;
+        event EventHandler<LogItemsParsedEventArgs> LogItemsParsed;
 
         bool TryParse(Queue<LogEntry> logLines, out IList<LogItem> logEntriesOutput);
     }
