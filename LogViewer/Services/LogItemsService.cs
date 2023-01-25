@@ -28,6 +28,28 @@ namespace LogViewer.Services
             }
         }
 
+        /// <summary>
+        /// Method parses the provided <paramref name="filePath"/> and grabs a list of <see cref="LogItem"/> from it. 
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// <para>
+        /// The parsing mechanism uses the Chain of Responsibility pattern with the handlers (<see cref="ILogEntryParser"/>) 
+        /// registered and checked one by one for each individual <see cref="LogEntry"/> till I find one that can handle the log entry. 
+        /// If no suitable handler is found, a log entry is ommitted. 
+        /// </para>
+        /// 
+        /// <para>
+        /// The method invokes <see cref="ILogItemsService.FileLogItemsParsed"/> event for log items as soon as they are found. 
+        /// </para>
+        /// </remarks>
+        /// 
+        /// <param name="filePath">File to be parsed.</param>
+        /// 
+        /// <returns>List of parsed <see cref="LogItem"/> objects.</returns>
+        /// 
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="filePath"/> is null.</exception>
+        /// <exception cref="FileNotFoundException">Thrown if the <paramref name="filePath"/> cannot be found or accessed.</exception>
         public async Task<IList<LogItem>> GetLogItemsAsync(string filePath)
         {
             try
@@ -99,7 +121,7 @@ namespace LogViewer.Services
             }
             finally
             {
-
+                // Some cleanup code can come here. 
             }
         }
     }
