@@ -29,6 +29,9 @@
     <None Update="85C27NK92C.com.flexibits.fantastical2.mac.helper 2022-11-26--03-25-05-612.log">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="test-logs.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
