@@ -42,17 +42,6 @@
                         <DataGridTextColumn Header="Code Debug Info" Binding="{Binding CodeDebugInfo, Mode=OneWay}"/>
                         <DataGridTextColumn Header="Calendar Name" Binding="{Binding CalendarName, Mode=OneWay}"/>
                         <DataGridTextColumn Header="Calendar Set Identifier" Binding="{Binding CalendarSetIdentifier, Mode=OneWay}"/>
-
-                        <DataGridTemplateColumn>
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel>
-                                        <Button Content="Copy" Command="{Binding Path=DataContext.CopyLogEntryCommand, RelativeSource= {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}">
-                                        </Button>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
