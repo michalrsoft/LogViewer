@@ -1,23 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LogViewer.Services;
-using LogViewer.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using System.ComponentModel;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace LogViewer.ViewModels
 {
+    /// <summary>
+    /// Class brings a construct to bind the view to the ViewModel with MVVM concept 
+    /// having the <see cref="MainViewModel"/> instantiated by Dependency Injection. 
+    /// </summary>
     public class ViewModelLocator
     {
         public MainViewModel TopViewModel

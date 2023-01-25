@@ -2,6 +2,9 @@
 
 namespace LogViewer.Base.Parsers
 {
+    /// <summary>
+    /// Parser that produces instances of <see cref="CalendarLogItem"/> from provided properties. 
+    /// </summary>
     public class CalendarLogEntryParser : LogEntryCommaDelimetedParserBase
     {
         #region ILogEntryParser members

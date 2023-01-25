@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LogViewer.Base.Models
 {
+    /// <summary>
+    /// Event args to pass information about log items (<see cref="FileLogItemsParsedEventArgs.Items"/>) found in the specific file 
+    /// (<see cref="FileLogItemsParsedEventArgs.FilePath"/>). 
+    /// </summary>
     public class FileLogItemsParsedEventArgs : EventArgs
     {
         private string _filePath;

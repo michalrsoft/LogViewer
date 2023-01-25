@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LogViewer.Base.Models
+﻿namespace LogViewer.Base.Models
 {
+    /// <summary>
+    /// Class represents Account log item with the default properties of an Account. 
+    /// </summary>
+    /// 
+    /// <remarks>
+    /// Lazy initialization is used for retrieving the actual properties of an Account. It was my initial idea to use Lazy 
+    /// initialization in this scenario, which it has turned out to be an overdo I guess. This can be changed. 
+    /// </remarks>
     public class AccountLogItem : LogItemWithPropertiesBase
     {
         #region Private fields
@@ -24,6 +26,8 @@ namespace LogViewer.Base.Models
 
         #endregion
 
+        #region Properties
+
         public string AccountName => _accountName.Value;
 
         public string Identifier => _identifier.Value;
@@ -36,16 +40,21 @@ namespace LogViewer.Base.Models
 
         public string ServerURL => _serverURL.Value;
 
-        public AccountLogItem(LogEntry logEntry, IList<string> entryParts)
-            : base(logEntry, LogEntryType.Account, entryParts)
+        #endregion
+
+        public AccountLogItem(LogEntry logEntry, IList<string> entryProperties)
+            : base(logEntry, LogEntryType.Account, entryProperties)
         {
-            _accountName = new Lazy<string>(() => EntryItems.FirstOrDefault());
-            _identifier = new Lazy<string>(() => EntryItems.Skip(1).FirstOrDefault());
+            // Retrieving the properties in an order that was provided to me 
+            // from Kent as a way to interpret a single Account log entry. 
+
+            _accountName = new Lazy<string>(() => EntryProperties.FirstOrDefault());
+            _identifier = new Lazy<string>(() => EntryProperties.Skip(1).FirstOrDefault());
 
             _isEnabled = new Lazy<Nullable<bool>>(
                 () =>
                 {
-                    string? isEnabledString = EntryItems.Skip(2).FirstOrDefault();
+                    string isEnabledString = EntryProperties.Skip(2).FirstOrDefault();
                     if (!string.IsNullOrWhiteSpace(isEnabledString))
                     {
                         if (bool.TryParse(isEnabledString, out var isEnabled))
@@ -57,9 +66,9 @@ namespace LogViewer.Base.Models
                     return null;
                 });
 
-            _type = new Lazy<string>(() => EntryItems.Skip(3).FirstOrDefault());
-            _userName = new Lazy<string>(() => EntryItems.Skip(4).FirstOrDefault());
-            _serverURL = new Lazy<string>(() => EntryItems.Skip(5).FirstOrDefault());
+            _type = new Lazy<string>(() => EntryProperties.Skip(3).FirstOrDefault());
+            _userName = new Lazy<string>(() => EntryProperties.Skip(4).FirstOrDefault());
+            _serverURL = new Lazy<string>(() => EntryProperties.Skip(5).FirstOrDefault());
         }
     }
 }

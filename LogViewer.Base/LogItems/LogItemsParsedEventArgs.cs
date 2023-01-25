@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LogViewer.Base.Models
+﻿namespace LogViewer.Base.Models
 {
+    /// <summary>
+    /// Event args used to pass information about new log items parsed. 
+    /// </summary>
     public class LogItemsParsedEventArgs : EventArgs
     {
         private IList<LogItem> _items;

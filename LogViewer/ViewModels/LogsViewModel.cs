@@ -6,14 +6,16 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reactive.Threading;
 using System.Threading;
-using System.Windows;
+using System.Threading.Tasks;
 
 namespace LogViewer.ViewModels
 {
+    /// <summary>
+    /// ViewModel that grabs log items data from the provided service and can have it displayed. It contains logic to initiate 
+    /// process of parsing the provided file to grab log items and receives the results in an event-driven manner by building 
+    /// Reactive Extensions subscriptions for the data. This way I can grab the data as it comes and have a way to display it. 
+    /// </summary>
     public class LogsViewModel
     {
         private ObservableCollection<AccountLogItem> _accounts;
@@ -28,6 +30,8 @@ namespace LogViewer.ViewModels
 
         private string _filePath;
 
+        #region Public properties
+
         public ObservableCollection<AccountLogItem> Accounts => _accounts;
 
         public ObservableCollection<CalendarLogItem> Calendars => _calendars;
@@ -36,6 +40,12 @@ namespace LogViewer.ViewModels
 
         public ObservableCollection<SyncQueuesLogItem> SyncQueues => _syncQueues;
 
+        #endregion
+
+        /// <summary>
+        /// Method initiates Reactive Extensions subscriptions for different item types and then invokes the operation 
+        /// that parses the file. 
+        /// </summary>
         public void StartLogProcessing()
         {
             IDisposable accountsSubscription = CreateSubscription(_accounts);
@@ -53,11 +63,22 @@ namespace LogViewer.ViewModels
                     }
                     catch (Exception ex)
                     {
-
+                        // TODO: Need to handle errors here. 
                     }
                 });
         }
 
+        /// <summary>
+        /// Method creates a Reactive Extensions subscription with logic that subscribes to a particular type of events 
+        /// (represented by <typeparamref name="TLogItem"/>). The observer running with <see cref="SynchronizationContext.Current"/> 
+        /// to update the collections nicely without explicit calls to <see cref="Dispatcher.BeginInvoke"/>.
+        /// </summary>
+        /// 
+        /// <typeparam name="TLogItem">Type of log items to register for and accept.</typeparam>
+        /// 
+        /// <param name="observableCollection">Collection to be populated with items.</param>
+        /// 
+        /// <returns>Subscription to <see cref="IObservable{T}"/>.</returns>
         protected virtual IDisposable CreateSubscription<TLogItem>(ObservableCollection<TLogItem> observableCollection) 
             where TLogItem : LogItem
         {

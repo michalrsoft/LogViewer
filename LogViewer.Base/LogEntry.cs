@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LogViewer.Base
+﻿namespace LogViewer.Base
 {
+    /// <summary>
+    /// Class represents a valid entry in the log which comes with a timestamp and a code debug header followed by contents. 
+    /// </summary>
     public class LogEntry
     {
         #region Private fields

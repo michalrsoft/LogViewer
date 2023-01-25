@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 
 namespace LogViewer.Base.Models
 {
+    /// <summary>
+    /// Class represents Calendar log item with the default properties. 
+    /// </summary>
+    /// 
+    /// <remarks>Using Regex to parse the string like &quot;1/0 (count: 804)&quot; 
+    /// which describes Calendar support and items count.</remarks>
     public class CalendarLogItem : LogItemWithPropertiesBase
     {
         public const string ParseSupportAndCountPattern = @"([0-1])\/([0-1])\s+\(count\:\s+([0-9]+)\)";
@@ -25,9 +26,11 @@ namespace LogViewer.Base.Models
 
         private bool _supportsStoringTasks = false;
 
-        private int _numberOfItems = 0;
+        private Nullable<int> _numberOfItems = null;
 
         #endregion
+
+        #region Properties
 
         public string CalendarName => _calendarName;
 
@@ -39,17 +42,22 @@ namespace LogViewer.Base.Models
 
         public bool SupportsStoringTasks => _supportsStoringTasks;
 
-        public int NumberOfItems => _numberOfItems;
+        public Nullable<int> NumberOfItems => _numberOfItems;
+
+        #endregion
 
         public CalendarLogItem(LogEntry logEntry, IList<string> entryContentItems)
             : base(logEntry, LogEntryType.Calendar, entryContentItems)
         {
-            _calendarName = EntryItems.FirstOrDefault();
+            // Retrieving the properties in an order that was provided to me 
+            // from Kent as a way to interpret a single Calendar log entry. 
 
-            _accountIdentifier = EntryItems.Skip(1).FirstOrDefault();
-            _calendarIdentifier = EntryItems.Skip(2).FirstOrDefault();
+            _calendarName = EntryProperties.FirstOrDefault();
 
-            string calendarSupportAndCount = EntryItems.Skip(3).FirstOrDefault();
+            _accountIdentifier = EntryProperties.Skip(1).FirstOrDefault();
+            _calendarIdentifier = EntryProperties.Skip(2).FirstOrDefault();
+
+            string calendarSupportAndCount = EntryProperties.Skip(3).FirstOrDefault();
             if (!string.IsNullOrWhiteSpace(calendarSupportAndCount))
             {
                 Match logEntryPrefixMatch = _parseSupportAndCountRegex.Match(calendarSupportAndCount);
@@ -58,7 +66,14 @@ namespace LogViewer.Base.Models
                     _supportsStoringEvents = string.Equals(logEntryPrefixMatch.Groups[1].Value, "1");
                     _supportsStoringTasks = string.Equals(logEntryPrefixMatch.Groups[2].Value, "1");
 
-                    Int32.TryParse(logEntryPrefixMatch.Groups[3].Value, out _numberOfItems);
+                    if (Int32.TryParse(logEntryPrefixMatch.Groups[3].Value, out var count))
+                    {
+                        _numberOfItems = count;
+                    }
+                    else
+                    {
+                        _numberOfItems = null;
+                    }
                 }
             }
         }

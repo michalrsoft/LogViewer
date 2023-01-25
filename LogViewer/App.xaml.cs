@@ -4,12 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace LogViewer
@@ -34,6 +28,9 @@ namespace LogViewer
             ServiceProvider = host.Services;
         }
 
+        /// <summary>
+        /// Method deals with setting up the Dependency Injection of Services, ViewModels and Views. 
+        /// </summary>
         private void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
             // Registering all services. 
@@ -43,7 +40,7 @@ namespace LogViewer
                     return new LogItemsService();
                 });
 
-            // Registering all view models. 
+            // Registering all view models we need to register. 
             services.AddSingleton<MainViewModel>();
 
             services.AddTransient(typeof(MainWindow));

@@ -1,23 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LogViewer.Base.Models
+﻿namespace LogViewer.Base.Models
 {
+    /// <summary>
+    /// Class represents a log item that corresponds to a single long entry in the log file. It is supposed to come 
+    /// with a list of properties (these are line comma-delimeted properties parsed). 
+    /// </summary>
     public class LogItemWithPropertiesBase : LogItem
     {
-        protected IList<string> _entryItems;
+        protected IList<string> _entryProperties;
 
-        public virtual IList<string> EntryItems => _entryItems;
+        public virtual IList<string> EntryProperties => _entryProperties;
 
-        public LogItemWithPropertiesBase(LogEntry entry, LogEntryType entryType, IList<string> entryItems) 
+        public LogItemWithPropertiesBase(LogEntry entry, LogEntryType entryType, IList<string> entryProperties) 
             : base(entry, entryType) 
         {
-            ArgumentNullException.ThrowIfNull(entryItems);
+            ArgumentNullException.ThrowIfNull(entryProperties);
 
-            _entryItems = entryItems;
+            _entryProperties = entryProperties;
         }
     }
 }

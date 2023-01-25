@@ -2,6 +2,9 @@
 
 namespace LogViewer.Base.Parsers
 {
+    /// <summary>
+    /// Parser that produces instances of <see cref="CurrentCalendarSetLogItem"/> from provided properties. 
+    /// </summary>
     public class CurrentCalendarSetLogEntryParser : LogEntryCommaDelimetedParserBase
     {
         #region ILogEntryParser members

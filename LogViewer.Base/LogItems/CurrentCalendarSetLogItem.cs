@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LogViewer.Base.Models
+﻿namespace LogViewer.Base.Models
 {
+    /// <summary>
+    /// Class represents Current Calendar Set log item with the default properties. 
+    /// </summary>
     public class CurrentCalendarSetLogItem : LogItemWithPropertiesBase
     {
         #region Private fields
@@ -16,16 +13,23 @@ namespace LogViewer.Base.Models
 
         #endregion
 
+        #region Properties
+
         public string CalendarName => _calendarName.Value;
 
         public string CalendarSetIdentifier => _calendarSetIdentifier.Value;
 
+        #endregion
+
         public CurrentCalendarSetLogItem(LogEntry logLine, IList<string> entryItems)
             : base(logLine, LogEntryType.CurrentCalendarSet, entryItems)
         {
-            _calendarName = new Lazy<string>(() => EntryItems.FirstOrDefault());
+            // Retrieving the properties in an order that was provided to me 
+            // from Kent as a way to interpret a single Calendar Set log entry. 
 
-            _calendarSetIdentifier = new Lazy<string>(() => EntryItems.Skip(1).FirstOrDefault());
+            _calendarName = new Lazy<string>(() => EntryProperties.FirstOrDefault());
+
+            _calendarSetIdentifier = new Lazy<string>(() => EntryProperties.Skip(1).FirstOrDefault());
         }
     }
 }

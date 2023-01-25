@@ -3,15 +3,21 @@ using System.Text;
 
 namespace LogViewer.Base.Parsers
 {
+    /// <summary>
+    /// Parser meant to detect Sync Queues log entries, split them and parse. 
+    /// </summary>
     public class SyncQueuesLogEntryParser : LogEntryParserBase
     {
         public const string EndOfSyncQueueLineDelimeter = ")>";
 
         #region ILogEntryParser members
 
-        // TODO: 
-        // Write a comment here on why I have not used a Regex in this scenario. 
-
+        /// <summary>
+        /// Extracts sync queries strings from lines of a single log entry. 
+        /// </summary>
+        /// 
+        /// <param name="linesToParse">Log entry contents to parse.</param>
+        /// <returns>A list of strigns that represent sync queues. Empty list if no sync queues detected.</returns>
         protected virtual IList<string> ExtractSyncQueueStrings(IList<string> linesToParse)
         {
             ArgumentNullException.ThrowIfNull(linesToParse);

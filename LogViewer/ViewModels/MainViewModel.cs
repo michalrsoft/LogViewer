@@ -1,24 +1,20 @@
-﻿using System;
+﻿using LogViewer.Services;
+using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using Accessibility;
-using LogViewer.Base;
-using LogViewer.Base.Models;
-using LogViewer.Base.Parsers;
-using LogViewer.Services;
-using Microsoft.Toolkit.Mvvm.Input;
-using Microsoft.Win32;
 
 namespace LogViewer.ViewModels
 {
+    /// <summary>
+    /// Main Window view model that supports a command <see cref="MainViewModel.OpenLogFilesCommand"/> to grab list of files from the 
+    /// user with ways for the list of files to be bound to the view and displayed. 
+    /// </summary>
     public class MainViewModel
     {
         public const string ZipFileExtension = ".zip";
@@ -40,6 +36,13 @@ namespace LogViewer.ViewModels
             OpenLogFilesCommand = new RelayCommand(async () => await OpenLogFilesAsync());
         }
 
+        /// <summary>
+        /// Method extracts files from the <paramref name="zipFilePath"/> and grabs the *.log files. 
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// Extraction happens into a temporary Windows folder which I don't clean up. 
+        /// </remarks>
         protected virtual List<string> ExtractLogsFromZipFile(string zipFilePath)
         {
             ArgumentNullException.ThrowIfNull(zipFilePath);
@@ -55,6 +58,10 @@ namespace LogViewer.ViewModels
             }
 
             return extractedLogFiles;
+
+            // TODO: 
+            // Need to remove the temp folder at some point when we don't need its contents anymore. 
+            // Should track it in the application and remove eventually. 
         }
 
         protected virtual string CreateNewTemporaryDirectory()
@@ -68,6 +75,10 @@ namespace LogViewer.ViewModels
         {
             try
             {
+                // Open a dialog for the user to choose files. 
+                // Then grab *.log and *.zip files. 
+                // Extract the *.zip files and grab *.log files from them & build a final list of files. 
+
                 OpenFileDialog openFileDialog = new OpenFileDialog();
                 openFileDialog.DefaultExt = ".log";
                 openFileDialog.Filter = "Log files (.log)|*.log|Zip files (.zip)|*.zip";

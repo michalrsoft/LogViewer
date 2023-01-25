@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LogViewer.Base.Models
+﻿namespace LogViewer.Base.Models
 {
+    /// <summary>
+    /// Enumeration represents log entry types. I have planned to use it in the main application but I skipped it for now.
+    /// </summary>
     public enum LogEntryType
     {
         Unknown = 0, 
@@ -19,6 +16,5 @@ namespace LogViewer.Base.Models
 
         // TODO: 
         // Other log types to be introduced. 
-        // ... 
     }
 }

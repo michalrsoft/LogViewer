@@ -2,6 +2,10 @@
 
 namespace LogViewer.Base.Parsers
 {
+    /// <summary>
+    /// Base abstract class for log parsers that implements the <see cref="ILogEntryParser.LogItemsParsed"/> event and provides 
+    /// ways for invoking it.
+    /// </summary>
     public abstract class LogEntryParserBase : ILogEntryParser
     {
         #region ILogEntryParser members

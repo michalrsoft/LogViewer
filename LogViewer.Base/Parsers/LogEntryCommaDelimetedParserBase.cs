@@ -2,14 +2,32 @@
 
 namespace LogViewer.Base.Parsers
 {
+    /// <summary>
+    /// Abstract class that is supposed to deal with log entries that contain comma-delimeted list of properties, ex. Accounts, 
+    /// Calendars, Calendar Sets. It can parse multiple log entries of the same type till it finds one it cannot handle. 
+    /// </summary>
     public abstract class LogEntryCommaDelimetedParserBase : LogEntryParserBase
     {
         private static readonly string[] LineSplitSeparators = new string[] { ", " };
 
         #region ILogEntryParser members
 
-        protected abstract LogItem GenerateLogEntry(LogEntry logLine, List<string> logEntryParts);
+        /// <summary>
+        /// Abstract method to be implemented in classes that build specific instances of <see cref="LogItem"/> based on 
+        /// provided <paramref name="logEntry"/> and its properties (<paramref name="logEntryParts"/>). 
+        /// </summary>
+        protected abstract LogItem GenerateLogEntry(LogEntry logEntry, List<string> logEntryParts);
 
+        /// <summary>
+        /// Method attempts to parse instances of <see cref="LogEntry"/> with a provided entry line prefix / header 
+        /// (represented by <paramref name="logEntryHeader"/>). 
+        /// </summary>
+        /// 
+        /// <param name="logEntryHeader">Expected prefix / header.</param>
+        /// <param name="queueOfLogLines">Queue of log entries to parse.</param>
+        /// <param name="logEntriesOutput">Output of the method results.</param>
+        /// 
+        /// <returns><c>True</c> if at least one log entry was parsed. Otherwise <c>False</c>.</returns>
         protected virtual bool TryParseWithEntryHeader(
             string logEntryHeader, 
             Queue<LogEntry> queueOfLogLines, 

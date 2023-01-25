@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LogViewer.Base.Models
+﻿namespace LogViewer.Base.Models
 {
+    /// <summary>
+    /// Base class for all log items. 
+    /// </summary>
     public class LogItem
     {
         #region Private fields
@@ -32,9 +29,23 @@ namespace LogViewer.Base.Models
 
         #endregion
 
+        /// <summary>
+        /// Constructor creates a new instance of <see cref="LogItem"/> with log entry and type.
+        /// </summary>
+        /// 
+        /// <param name="entry">Entry from the log file.</param>
+        /// <param name="lineEntryType">Type of log entry.</param>
+        /// 
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="entry"/> is null.</exception>
+        /// <exception cref="ArgumentException">Thrown if <paramref name="lineEntryType"/> equals <see cref="LogEntryType.Unknown"/>.</exception>
         public LogItem(LogEntry entry, LogEntryType lineEntryType)
         {
             ArgumentNullException.ThrowIfNull(entry);
+
+            if (lineEntryType == LogEntryType.Unknown)
+            {
+                throw new ArgumentException("The type of log entry is unknown.", nameof(lineEntryType));
+            }
 
             _entry = entry;
             _entryType = lineEntryType;

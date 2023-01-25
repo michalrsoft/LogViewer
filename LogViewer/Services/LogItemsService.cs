@@ -1,16 +1,18 @@
 ﻿using LogViewer.Base;
 using LogViewer.Base.Models;
 using LogViewer.Base.Parsers;
-using LogViewer.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace LogViewer.Services
 {
+    /// <summary>
+    /// Service that parses log items from provided file and notifies with event (<see cref="ILogItemsService.FileLogItemsParsed"/>) 
+    /// as it goes forward with parsing. 
+    /// </summary>
     public class LogItemsService : ILogItemsService
     {
         public event EventHandler<FileLogItemsParsedEventArgs> FileLogItemsParsed = null;
