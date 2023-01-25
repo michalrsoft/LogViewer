@@ -44,7 +44,7 @@ namespace LogViewer.ViewModels
                     () =>
                     {
                         LogsViewModel logsViewModel = new LogsViewModel(_logItemsService, FilePath);
-                        logsViewModel.ProcessFileLogs();
+                        logsViewModel.StartLogProcessing();
 
                         return logsViewModel;
                     });

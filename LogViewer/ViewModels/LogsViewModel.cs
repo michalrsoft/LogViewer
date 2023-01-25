@@ -4,9 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Threading;
+using System.Reactive.Threading;
+using System.Threading;
+using System.Windows;
 
 namespace LogViewer.ViewModels
 {
@@ -32,14 +36,18 @@ namespace LogViewer.ViewModels
 
         public ObservableCollection<SyncQueuesLogItem> SyncQueues => _syncQueues;
 
-        public void ProcessFileLogs()
+        public void StartLogProcessing()
         {
+            IDisposable accountsSubscription = CreateSubscription(_accounts);
+            IDisposable calendarsSubscription = CreateSubscription(_calendars);
+            IDisposable calendarSetsSubscription = CreateSubscription(_calendarSets);
+            IDisposable syncQueuesSubscription = CreateSubscription(_syncQueues);
+
             Task.Run(
                 () =>
                 {
                     try
                     {
-                        _logItemsService.FileLogItemsParsed += LogItemsService_LogItemsParsed;
                         Task<IList<LogItem>> getLogItems = _logItemsService.GetLogItemsAsync(_filePath);
                         getLogItems.Wait();
                     }
@@ -47,48 +55,31 @@ namespace LogViewer.ViewModels
                     {
 
                     }
-                    finally
-                    {
-                        _logItemsService.FileLogItemsParsed -= LogItemsService_LogItemsParsed;
-                    }
                 });
         }
 
-        private void LogItemsService_LogItemsParsed(object sender, FileLogItemsParsedEventArgs e)
+        protected virtual IDisposable CreateSubscription<TLogItem>(ObservableCollection<TLogItem> observableCollection) 
+            where TLogItem : LogItem
         {
-            try
-            {
-                System.Windows.Application.Current.Dispatcher.BeginInvoke(
-                    new Action(() =>
-                    {
-                        if (string.Equals(e.FilePath, _filePath, StringComparison.OrdinalIgnoreCase))
-                        {
-                            foreach (LogItem item in e.Items)
-                            {
-                                if (item is AccountLogItem)
-                                {
-                                    Accounts.Add(item as AccountLogItem);
-                                }
-                                else if (item is CalendarLogItem)
-                                {
-                                    Calendars.Add(item as CalendarLogItem);
-                                }
-                                else if (item is CurrentCalendarSetLogItem)
-                                {
-                                    CalendarSets.Add(item as CurrentCalendarSetLogItem);
-                                }
-                                else if (item is SyncQueuesLogItem)
-                                {
-                                    SyncQueues.Add(item as SyncQueuesLogItem);
-                                }
-                            }
-                        }
-                    }));
-            }
-            catch (Exception ex)
-            {
+            IObservable<EventPattern<FileLogItemsParsedEventArgs>> observableFromEvent =
+                Observable
+                    .FromEventPattern<EventHandler<FileLogItemsParsedEventArgs>, FileLogItemsParsedEventArgs>(
+                        h => _logItemsService.FileLogItemsParsed += h,
+                        h => _logItemsService.FileLogItemsParsed -= h);
 
-            }
+            return
+                observableFromEvent
+                    .Where(logevents => string.Equals(logevents.EventArgs.FilePath, _filePath, StringComparison.OrdinalIgnoreCase))
+                    .Select(logevents => logevents.EventArgs.Items.OfType<TLogItem>())
+                    .ObserveOn(SynchronizationContext.Current)
+                    .Subscribe(
+                        change =>
+                        {
+                            foreach (TLogItem logItem in change)
+                            {
+                                observableCollection.Add(logItem);
+                            }
+                        });
         }
 
         public LogsViewModel(ILogItemsService logItemsService, string filePath)

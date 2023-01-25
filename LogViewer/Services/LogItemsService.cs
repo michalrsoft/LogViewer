@@ -28,58 +28,77 @@ namespace LogViewer.Services
 
         public async Task<IList<LogItem>> GetLogItemsAsync(string filePath)
         {
-            ArgumentNullException.ThrowIfNull(filePath);
-
-            if (string.IsNullOrWhiteSpace(filePath))
+            try
             {
-                throw new ArgumentException("File path was not provided.", nameof(filePath));
-            }
+                ArgumentNullException.ThrowIfNull(filePath);
 
-            if (!File.Exists(filePath))
-            {
-                throw new FileNotFoundException($"File was not found or not accessible at {filePath}.");
-            }
-
-            string[] allLines = await File.ReadAllLinesAsync(filePath);
-
-            Queue<LogEntry> logEntries = new Queue<LogEntry>(new LogFileSplitter().SplitEntries(allLines));
-
-            List<ILogEntryParser> logEntryParsers =
-                new List<ILogEntryParser>()
+                if (string.IsNullOrWhiteSpace(filePath))
                 {
-                    new AccountLogEntryParser(),
-                    new CalendarLogEntryParser(),
-                    new CurrentCalendarSetLogEntryParser(),
-                    new SyncQueuesLogEntryParser(),
-                };
+                    throw new ArgumentException("File path was not provided.", nameof(filePath));
+                }
 
-            foreach (ILogEntryParser parser in logEntryParsers)
-            {
-                parser.LogItemsParsed += (sender, ea) => OnFileLogItemsParsed(filePath, ea.Items);
-            }
+                if (!File.Exists(filePath))
+                {
+                    throw new FileNotFoundException($"File was not found or not accessible at {filePath}.");
+                }
 
-            List<LogItem> allLogItems = new List<LogItem>();
-            while (logEntries.Any())
-            {
-                bool lineParsed = false;
+                string[] allLines = await File.ReadAllLinesAsync(filePath);
+
+                Queue<LogEntry> logEntries = new Queue<LogEntry>(new LogFileSplitter().SplitEntries(allLines));
+
+                List<ILogEntryParser> logEntryParsers =
+                    new List<ILogEntryParser>()
+                    {
+                        new AccountLogEntryParser(),
+                        new CalendarLogEntryParser(),
+                        new CurrentCalendarSetLogEntryParser(),
+                        new SyncQueuesLogEntryParser()
+                    };
+
+                EventHandler<LogItemsParsedEventArgs> handler = (s, e) => OnFileLogItemsParsed(filePath, e.Items);
+
                 foreach (ILogEntryParser parser in logEntryParsers)
                 {
-                    if (parser.TryParse(logEntries, out var newlyParsedEntries))
-                    {
-                        lineParsed = true;
-                        allLogItems.AddRange(newlyParsedEntries);
+                    parser.LogItemsParsed += handler;
+                }
 
-                        break;
+                try
+                {
+                    List<LogItem> allLogItems = new List<LogItem>();
+                    while (logEntries.Any())
+                    {
+                        bool lineParsed = false;
+                        foreach (ILogEntryParser parser in logEntryParsers)
+                        {
+                            if (parser.TryParse(logEntries, out var newlyParsedEntries))
+                            {
+                                lineParsed = true;
+                                allLogItems.AddRange(newlyParsedEntries);
+
+                                break;
+                            }
+                        }
+
+                        if (!lineParsed)
+                        {
+                            logEntries.Dequeue();
+                        }
+                    }
+
+                    return allLogItems;
+                }
+                finally
+                {
+                    foreach (ILogEntryParser parser in logEntryParsers)
+                    {
+                        parser.LogItemsParsed -= handler;
                     }
                 }
-
-                if (!lineParsed)
-                {
-                    logEntries.Dequeue();
-                }
             }
+            finally
+            {
 
-            return allLogItems;
+            }
         }
     }
 }
